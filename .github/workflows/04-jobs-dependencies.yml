@@ -31,4 +31,4 @@ jobs:
       - job-2
       - job-3
     steps:
-      - run: echo "forms a DAG(directed acyclic graph)
+      - run: echo "forms a DAG(directed acyclic graph)"
