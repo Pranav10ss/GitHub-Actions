@@ -1,4 +1,4 @@
-name: jobs dependencies
+name: jobs dependencies workflow
 
 on:
   push:
