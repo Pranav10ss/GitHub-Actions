@@ -1,0 +1,35 @@
+name: triggering events
+
+on:
+  push:
+    branches:
+      - 'feat/**'
+      - 'fix/**'
+
+  pull_request:
+    types:
+      # By default, a workflow only runs when a pull_request event's activity type is opened, synchronize or reopened.
+      - opened
+      - synchronize
+      - reopened
+    paths:
+      - "test-folder/filters/*.md"
+      - "!test-folder/filters/*.txt"
+  
+  # schedule event allows you to trigger a workflow at a scheduled time
+  schedule:
+    - cron: "0 0 * * *"
+
+  # to manually trigger a workflow using GitHub API
+  workflow_dispatch:
+
+jobs:
+  echo-event:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Dump full event JSON
+        run: |
+          # prints a clear header in the log indicating which event(push, pull_request, workflow_dispatch) triggered the action
+          echo "=== $GITHUB_EVENT_NAME payload ==="
+          # displays the contents of the JSON file located at $GITHUB_EVENT_PATH, which contains the full, raw webhook event data
+          cat "$GITHUB_EVENT_PATH"
