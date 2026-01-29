@@ -1,0 +1,37 @@
+# environment variables can be scoped across entire workflow or one only within a job or only within a step
+name: Environment variables
+
+on:
+  workflow_dispatch:
+
+env:
+  WORKFLOW_VAR: THIS_VAR_IS_WORKFLOW_SCOPED
+
+jobs:
+  job-1:
+    runs-on: ubuntu-24.04
+    env:
+      JOB_VAR: THIS_VAR_IS_JOB_SCOPED
+    steps:
+      - name: to inspect scopes of job-1 and step 1
+        env:
+          STEP_VAR: THIS_VAR_IS_STEP_SCOPED
+        run: |
+          echo "WORKFLOW_VAR: $WORKFLOW_VAR"          # visible
+          echo "JOB_VAR:      $JOB_VAR"               # visible
+          echo "STEP_VAR:     $STEP_VAR"              # visible only here
+    
+      - name: to inspect scopes of job 1 and step 2
+        run: |
+          echo "WORKFLOW_VAR: $WORKFLOW_VAR"          # visible
+          echo "JOB_VAR:      $JOB_VAR"               # visible
+          echo "STEP_VAR:     ${STEP_VAR:-<UNSET>}"   # not set here
+    
+  job-2:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: to inspect scopes job-2 and step 2
+        run: |
+          echo "WORKFLOW_VAR: $WORKFLOW_VAR"          # visible
+          echo "JOB_VAR:      ${FOO:-<UNSET>}"        # not set here
+          echo "STEP_VAR:     ${STEP_VAR:<UNSET>}"    # not set here
