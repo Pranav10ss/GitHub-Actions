@@ -26,15 +26,15 @@ jobs:
           name: my-artifact
           path: artifact.txt
 
-    artifact-downlaod:
-      name: consume artifact
-      runs-on: ubuntu-24.04
-      needs: job-artifact-upload
-      steps:
-        - name: download artifact
-          uses: actions/download-artifact@v4
-          with:
-            name: my-artifact
+  artifact-downlaod:
+    name: consume artifact
+    runs-on: ubuntu-24.04
+    needs: job-artifact-upload
+    steps:
+      - name: download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: my-artifact
 
-        - name: Cat artifact file
-          run: cat artifact.txt
+      - name: Cat artifact file
+        run: cat artifact.txt
