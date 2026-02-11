@@ -29,7 +29,7 @@ jobs:
   artifact-downlaod:
     name: consume artifact
     runs-on: ubuntu-24.04
-    needs: job-artifact-upload
+    needs: artifact-upload
     steps:
       - name: download artifact
         uses: actions/download-artifact@v4
