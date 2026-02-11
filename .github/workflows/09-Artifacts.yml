@@ -1,0 +1,40 @@
+# By default jobs are run in an ephemeral environment that are created and destroyed with the lifecycle of the job itself. 
+# Artifacts gives us a mechanism to persist data beyond that lifecycle.
+# There are two actions provided by GitHub that are used to both store and then consume artifacts. 
+# To upload we use actions/upload-artifact and to download/consume an artifact, we use actions/download-artifact.
+
+# In this workflow, we will create a text file & upload it as an artifact. 
+# Then in a downstream job, we can download that text file and cat it out to the terminal.
+
+name: Artifacts
+
+on:
+  workflow_dispatch:
+
+jobs:
+  artifact-upload:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Create a artifact text file
+        run: 
+          echo "This is stored as an artifact" > artifact.txt
+          echo "Generated on ${date}" >> artifact.txt
+
+      - name: Upload artifact
+        uses: actions/upload-artifacts@v4
+        with:
+          name: my-artifact
+          path: artifact.txt
+
+    artifact-downlaod:
+      name: consume artifact
+      runs-on: ubuntu-24.04
+      needs: job-artifact-upload
+      steps:
+        - name: download artifact
+          uses: actions/download-artifact@v4
+          with:
+            name: my-artifact
+
+        - name: Cat artifact file
+          run: cat artifact.txt
