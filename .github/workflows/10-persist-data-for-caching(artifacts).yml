@@ -1,0 +1,47 @@
+# The need to persist data across jobs is for caching. 
+# Jobs are ephemeral. If we need to install or modify something within that job, 
+# we either need to do it every single time job runs or we can use a cache to persist those data elsewhere and then 
+# restore them to avoid that repetitive work over and over again. 
+# actions/cache provides us that mechanism to cache data. When we use this, data that we specify will be 
+# uploaded into a remote object storage. Within github, their cache is going to be capped at 10 gigabytes.
+# Types of things we can cache are language runtime or tool chain that we need to build and execute applications. Or things like dependencies
+# that we download and include in our application builds.
+
+name: Caching
+
+on: 
+  workflow_dispatch:
+
+jobs:
+  cache:
+    name: demo cache job
+    runs-on: ubuntu-24.04
+    steps:
+      # Attempts to restore cache from previous run(misses on first run)
+      - name: restore cache
+        uses: actions/cache@v4
+        with:
+          path: demo-cache
+          key: demo-cache-key
+
+      # populate the cache directory only if it is a cache miss
+      - name: populate cache directory
+        if: steps.demo-cache.outputs.cache-hit != 'true'
+        run: |
+          echo "Cache miss - populating cache directory"
+          mkdir -p demo-cache
+          date > demo-cache/file.txt
+
+      # verify the cache directory contents. Save cache only if we generated a new content
+      - name: save cache
+        if: steps.demo-cache.outputs.cache-hit != 'true'
+        uses: actions/cache@v4
+        with: 
+          path: demo-cache
+          key: demo-cache-key
+
+      # outputing whether it was a cache hit or miss and cat that to terminal
+      - name: verify cache status
+        run: |
+          echo "cache-hit? -> ${{ steps.demo-cache.outputs.cache-hit}}"
+          cat demo-cache/file.txt
