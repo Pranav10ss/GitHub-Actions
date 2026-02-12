@@ -19,6 +19,7 @@ jobs:
     steps:
       # Attempts to restore cache from previous run(misses on first run)
       - name: restore cache
+        id: demo-cache
         uses: actions/cache@v4
         with:
           path: demo-cache
@@ -43,5 +44,5 @@ jobs:
       # outputing whether it was a cache hit or miss and cat that to terminal
       - name: verify cache status
         run: |
-          echo "cache-hit? -> ${{ steps.demo-cache.outputs.cache-hit}}"
+          echo "cache-hit? -> ${{ steps.demo-cache.outputs.cache-hit }}"
           cat demo-cache/file.txt
